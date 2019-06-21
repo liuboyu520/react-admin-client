@@ -95,6 +95,12 @@ class LeftNav extends Component {
             return prev;
         },[]);
     };
+
+    //在组件render()前执行,只执行一次,在此生命周期函数中动态加载菜单数据,效率高(优化)
+    componentWillMount() {
+        this.menuNodes = this.getMenuNodes(menuList);
+    }
+
     render() {
 
         //获取当前请求的路径名称(添加到defaultSelectedKeys属性中,实现请求的路径与菜单的选中状态进行同步)
@@ -106,12 +112,12 @@ class LeftNav extends Component {
                     <h2>硅谷后台</h2>
                 </Link>
                 <Menu
-                    defaultSelectedKeys={[`${pathName}`]}
+                    defaultSelectedKeys={[pathName]}
                     mode="inline"
                     theme="dark">
                     {/* 菜单动态加载 */}
                     {
-                        this.getMenuNodes(menuList)
+                        this.menuNodes
                     }
                 </Menu>
             </div>

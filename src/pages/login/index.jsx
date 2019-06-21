@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import {
     Form,
     Icon,
@@ -17,15 +18,17 @@ import './index.less';
 import { reqLogin } from '../../api';
 
 import memoryCache from '../../utils/memoryUtils';
+import localStorage from '../../utils/localStorage';
 
 /**
  * 登录的路由组件
  */
 class Login extends Component {
 
-    handleSubmit = event =>{
+    //用户登录
+    login = event =>{
 
-        //阻止表单默认行为
+        //阻止默认行为(防止表单提交)
         event.preventDefault();
 
         //提交表单验证
@@ -48,6 +51,9 @@ class Login extends Component {
                     //保存用户信息到内存中
                     memoryCache.user = result.data;
 
+                    //保存用户信息到localStorage中
+                    localStorage.setUser(result.data);
+
                     //跳转到管理页面
                     //什么时候用push()什么时候用replace() => 不需要再回退的时候用replace()
                     this.props.history.replace('/');
@@ -58,6 +64,9 @@ class Login extends Component {
 
                 }
 
+            }else {
+                //不需要做任何处理,表单项中没有校验通过会显示相应的提示信息
+                console.log('表单没有验证通过!');
             }
         });
 
@@ -81,6 +90,13 @@ class Login extends Component {
 
     render(){
 
+
+        //用户登录了自动跳转到主界面
+        const user = memoryCache.user;
+        if(user && user._id){
+            return <Redirect to="/" />
+        }
+
         const { getFieldDecorator } = this.props.form;
         return (
             <div className="login">
@@ -90,7 +106,7 @@ class Login extends Component {
                 </header>
                 <section className="login-content">
                     <h2>用户登录</h2>
-                    <Form onSubmit={this.handleSubmit} className="login-form">
+                    <Form onSubmit={this.login} className="login-form">
                         <Form.Item>
                             {
                                 /*
@@ -148,4 +164,8 @@ class Login extends Component {
     }
 }
 
+/*
+    包装Form组件生成一个新的组件: Form(Login)
+    新组件会向Form组件传递一个强大的对象属性: form
+ */
 export default Form.create()(Login);

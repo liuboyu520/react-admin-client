@@ -18,15 +18,36 @@ import './index.less';
  */
 class Login extends Component {
 
-    handleSubmit = (event) =>{
+    handleSubmit = event =>{
+
         //阻止表单默认行为
         event.preventDefault();
+
+        //提交表单验证
+        this.props.form.validateFields((err, values)=>{
+
+            if(!err){ //表单校验通过
+
+                //获取用户名和密码
+                const { username, password } = values;
+            }
+        });
+
     }
 
     //密码自定义校验规则
     validatePWd = (rule, value, callback)=>{
         if(!value){
-            callback('密码不能为空！');
+            callback('密码不能为空');
+        }else if(value.length < 4){
+            callback('密码至少4位');
+        }else if(value.length > 12){
+            callback('密码最多12位');
+        }else if(!/^[a-zA-Z0-9_]+$/.test(value)){
+            callback('密码必须是英文、数字或下划线组成');
+        }else {
+            //校验通过
+            callback();
         }
     }
 

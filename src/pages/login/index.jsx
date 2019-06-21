@@ -13,6 +13,11 @@ import logo from '../../assets/images/logo.png';
 //加载样式文件
 import './index.less';
 
+//引入API模块
+import { reqLogin } from '../../api';
+
+import memoryCache from '../../utils/memoryUtils';
+
 /**
  * 登录的路由组件
  */
@@ -24,12 +29,35 @@ class Login extends Component {
         event.preventDefault();
 
         //提交表单验证
-        this.props.form.validateFields((err, values)=>{
+        this.props.form.validateFields( async (err, values)=>{
 
-            if(!err){ //表单校验通过
+            //所有表单项都验证通过(表单验证成功)
+            if(!err){
 
                 //获取用户名和密码
                 const { username, password } = values;
+
+                //用户登录
+                //用await和async改造过后
+                const result = await reqLogin(username, password);
+                if(result.status === 0){ //用户登录成功
+
+                    //提示登录成功信息
+                    message.success('登录成功！');
+
+                    //保存用户信息到内存中
+                    memoryCache.user = result.data;
+
+                    //跳转到管理页面
+                    //什么时候用push()什么时候用replace() => 不需要再回退的时候用replace()
+                    this.props.history.replace('/');
+
+                }else { //登录失败
+                    //提示相关信息
+                    message.error(result.msg);
+
+                }
+
             }
         });
 

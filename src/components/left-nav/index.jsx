@@ -60,6 +60,8 @@ class LeftNav extends Component {
     //使用数组的reduce()和递归算法实现
     getMenuNodes = (menuList) => {
 
+        //获取当前请求的路径
+        const pathName = this.props.location.pathname;
         return menuList.reduce((prev, item) => {
             if(!item.children){
                 prev.push(
@@ -73,6 +75,12 @@ class LeftNav extends Component {
                     )
                 );
             }else {
+
+                //查找当前请求路径对应选中的子列表(选中的子菜单在刷新页面的情况下处于展开状态)
+                const result = item.children.find(childItem => childItem.key === pathName);
+                if(result){ //匹配成功
+                    this.selectKey = item.key; //将当前匹配子菜单的父级菜单key保存在组件实例对象的selectKey属性中
+                }
                 prev.push(
                     (
                         <SubMenu
@@ -105,6 +113,9 @@ class LeftNav extends Component {
 
         //获取当前请求的路径名称(添加到defaultSelectedKeys属性中,实现请求的路径与菜单的选中状态进行同步)
         const pathName = this.props.location.pathname;
+
+        //得到当前需要打开菜单的key
+        const selectKey = this.selectKey;
         return (
             <div className="left-nav">
                 <Link to="/" className="left-nav-header">
@@ -113,6 +124,7 @@ class LeftNav extends Component {
                 </Link>
                 <Menu
                     defaultSelectedKeys={[pathName]}
+                    defaultOpenKeys={[selectKey]}
                     mode="inline"
                     theme="dark">
                     {/* 菜单动态加载 */}

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, withRouter } from 'react-router-dom';
 
 //引入antd组件
 import {Menu, Icon} from 'antd';
@@ -17,7 +17,7 @@ const {SubMenu} = Menu;
 /**
  * 左侧菜单
  */
-export default class LeftNav extends Component {
+class LeftNav extends Component {
 
     /**
      * 根据菜单数组生成对应的标签数组：
@@ -97,6 +97,8 @@ export default class LeftNav extends Component {
     };
     render() {
 
+        //获取当前请求的路径名称(添加到defaultSelectedKeys属性中,实现请求的路径与菜单的选中状态进行同步)
+        const pathName = this.props.location.pathname;
         return (
             <div className="left-nav">
                 <Link to="/" className="left-nav-header">
@@ -104,6 +106,7 @@ export default class LeftNav extends Component {
                     <h2>硅谷后台</h2>
                 </Link>
                 <Menu
+                    defaultSelectedKeys={[`${pathName}`]}
                     mode="inline"
                     theme="dark">
                     {/* 菜单动态加载 */}
@@ -115,3 +118,11 @@ export default class LeftNav extends Component {
         )
     }
 }
+
+/**
+ * withRouter()：高阶组件
+ *      包装非路由组件,返回一个新的组件
+ *      新的组件向非路由组件传递路由组件都有的3个属性：history/location/match
+ *      而请求的路径名称刚好在location中
+ */
+export default withRouter(LeftNav);

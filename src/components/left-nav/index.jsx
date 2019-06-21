@@ -19,6 +19,40 @@ const {SubMenu} = Menu;
  */
 export default class LeftNav extends Component {
 
+    getMenuNodes = (menuList) => {
+        return menuList.map(item => {
+            console.log(item)
+            if(!item.children) {
+                return (
+                    <Menu.Item key={item.key}>
+                        <Link to={item.key}>
+                            <Icon type={item.icon}/>
+                            <span>{item.title}</span>
+                        </Link>
+                    </Menu.Item>
+                )
+            }else {
+                return (
+                    <SubMenu
+                        key={item.key}
+                        title={
+                            <span>
+                                <Icon type={item.icon}/>
+                                <span>{item.title}</span>
+                             </span>
+                        }
+                    >
+
+                        {
+                            this.getMenuNodes(item.children)
+                        }
+                    </SubMenu>
+                )
+            }
+
+        });
+    };
+
     render() {
 
         return (
@@ -30,75 +64,10 @@ export default class LeftNav extends Component {
                 <Menu
                     mode="inline"
                     theme="dark">
-
-                    {/* 一级菜单：首页 */}
-                    <Menu.Item >
-                        <Icon type="home"/>
-                        <span>首页</span>
-                    </Menu.Item>
-
-                    {/* 一级菜单：商品 */}
-                    <SubMenu
-                        key="sub1"
-                        title={
-                            <span>
-                                <Icon type="appstore"/>
-                                <span>商品</span>
-                             </span>
-                        }
-                    >
-                        <Menu.Item key="2">
-                            <Icon type="bars"/>
-                            <span>品类管理</span>
-                        </Menu.Item>
-                        <Menu.Item key="3">
-                            <Icon type="tool"/>
-                            <span>商品管理</span>
-                        </Menu.Item>
-                    </SubMenu>
-
-                    {/* 一级菜单：用户管理 */}
-                    <SubMenu
-                        key="sub2"
-                        title={
-                            <span>
-                                <Icon type="user"/>
-                                <span>用户管理</span>
-                             </span>
-                        }
-                    >
-                        <Menu.Item key="4">用户管理1</Menu.Item>
-                        <Menu.Item key="5">用户管理2</Menu.Item>
-                    </SubMenu>
-
-                    {/* 一级菜单：角色管理 */}
-                    <SubMenu
-                        key="sub3"
-                        title={
-                            <span>
-                                <Icon type="team"/>
-                                <span>角色管理</span>
-                             </span>
-                        }
-                    >
-                        <Menu.Item key="6">角色管理1</Menu.Item>
-                        <Menu.Item key="7">角色管理2</Menu.Item>
-                    </SubMenu>
-
-                    {/* 一级菜单：图形图表 */}
-                    <SubMenu
-                        key="sub4"
-                        title={
-                            <span>
-                                <Icon type="bar-chart"/>
-                                <span>图形图表</span>
-                             </span>
-                        }
-                    >
-                        <Menu.Item key="8">图形图表1</Menu.Item>
-                        <Menu.Item key="9">图形图表2</Menu.Item>
-                    </SubMenu>
-
+                    {/* 菜单动态加载 */}
+                    {
+                        this.getMenuNodes(menuList)
+                    }
                 </Menu>
             </div>
         )

@@ -19,7 +19,11 @@ const {SubMenu} = Menu;
  */
 export default class LeftNav extends Component {
 
-    getMenuNodes = (menuList) => {
+    /**
+     * 根据菜单数组生成对应的标签数组：
+     *      通过数组的map()和递归算法实现
+     */
+    getMenuNodes_ = (menuList) => {
         return menuList.map(item => {
             console.log(item)
             if(!item.children) {
@@ -53,6 +57,44 @@ export default class LeftNav extends Component {
         });
     };
 
+    //使用数组的reduce()和递归算法实现
+    getMenuNodes = (menuList) => {
+
+        return menuList.reduce((prev, item) => {
+            if(!item.children){
+                prev.push(
+                    (
+                        <Menu.Item key={item.key}>
+                            <Link to={item.key}>
+                                <Icon type={item.icon}/>
+                                <span>{item.title}</span>
+                            </Link>
+                        </Menu.Item>
+                    )
+                );
+            }else {
+                prev.push(
+                    (
+                        <SubMenu
+                            key={item.key}
+                            title={
+                                <span>
+                                <Icon type={item.icon}/>
+                                <span>{item.title}</span>
+                             </span>
+                            }
+                        >
+
+                            {
+                                this.getMenuNodes(item.children)
+                            }
+                        </SubMenu>
+                    )
+                );
+            }
+            return prev;
+        },[]);
+    };
     render() {
 
         return (

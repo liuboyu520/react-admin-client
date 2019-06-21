@@ -9,6 +9,9 @@ import logo from '../../assets/images/logo.png';
 
 import './index.less';
 
+//引入菜单数据
+import menuList from '../../config/menuConfig';
+
 const {SubMenu} = Menu;
 
 /**

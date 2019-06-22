@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Card, Icon, Button, Table, message} from 'antd';
+import {Card, Icon, Button, Table, message, Modal} from 'antd';
 
 //引入调用后台接口的API
 import {reqCategorys} from '../../api';
@@ -18,7 +18,8 @@ export default class Category extends Component {
         categorys: [], //一级分类列表
         subCategorys: [], //二级分类列表
         parentId: '0', //一级分类列表父级ID
-        parentName: '' //父级分类名称
+        parentName: '', //父级分类名称
+        showStatus: 0, //控制隐藏及显示弹出框的类型 0：隐藏  1：显示添加分类弹出框  2：显示更新分类弹出框
     }
 
     initColumns = () => {
@@ -33,7 +34,7 @@ export default class Category extends Component {
                 render: (category) => {
                     return (
                         <div>
-                            <LinkButton>修改分类</LinkButton>
+                            <LinkButton onClick={this.showUpdateWindow}>修改分类</LinkButton>
                             {/* 如果在事件的回调函数中获取外面传递的参数并且组件渲染的时候不执行,等到点击的时候再执行 */}
                             {/* 解决方案：在需要执行的回调逻辑外面再包裹一层函数 */}
                             {this.state.parentId === "0" ?
@@ -105,6 +106,37 @@ export default class Category extends Component {
         });
     };
 
+    //显示更新分类弹出窗口
+    showUpdateWindow = () => {
+        this.setState({
+            showStatus: 2
+        });
+    }
+
+    //修改分类
+    updateCategory = () => {
+
+    }
+
+    //显示添加分类弹出窗口
+    showAddWindow = () => {
+        this.setState({
+            showStatus: 1
+        });
+    }
+
+    //添加分类
+    addCategory = () => {
+
+    }
+
+    //关闭添加/更新窗口
+    handleCancel = () => {
+        this.setState({
+            showStatus: 0
+        });
+    }
+
     //组件渲染前初始化表格的columns
     componentWillMount() {
         this.initColumns();
@@ -128,7 +160,7 @@ export default class Category extends Component {
             </span>
         );
         const extra = (
-            <Button type="primary">
+            <Button type="primary" onClick={this.showAddWindow}>
                 <Icon type="plus"/>
                 添加
             </Button>
@@ -142,6 +174,26 @@ export default class Category extends Component {
                         dataSource={parentId === "0" ? categorys : subCategorys}
                         columns={this.columns}/>;
                 </Card>
+
+                {/* 添加分类弹出框 */}
+                <Modal
+                    title="添加分类"
+                    visible={this.state.showStatus === 1}
+                    onOk={this.addCategory}
+                    onCancel={this.handleCancel}
+                >
+                    <p>添加分类</p>
+                </Modal>
+
+                {/* 修改分类弹出框 */}
+                <Modal
+                    title="修改分类"
+                    visible={this.state.showStatus === 2}
+                    onOk={this.updateCategory}
+                    onCancel={this.handleCancel}
+                >
+                    <p>修改分类</p>
+                </Modal>
             </div>
         )
     }

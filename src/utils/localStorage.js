@@ -15,7 +15,10 @@ export default {
     //获取
     getUser (){
         return store.get(USER_KEY) || {};
-    }
+    },
 
+    removeUser () {
+        store.remove(USER_KEY);
+    }
 
 }

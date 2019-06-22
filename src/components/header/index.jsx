@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import { Modal } from 'antd';
 import { withRouter } from 'react-router-dom';
+
 import './index.less';
 
 import { formateDate } from '../../utils/dateUtils';
@@ -9,6 +11,7 @@ import {reqWeather} from '../../api';
 
 //引入内存模块
 import memoryUtils from '../../utils/memoryUtils';
+import localStorage from '../../utils/localStorage';
 
 //引入菜单数据
 import menuList from '../../config/menuConfig';
@@ -66,6 +69,28 @@ class Header extends Component {
         return title;
     };
 
+    //退出登录
+    logout = () => {
+
+        //弹出退出登录提示框
+        Modal.confirm({
+            title: '确认退出?',
+            onOk: () => { //确认时执行的回调函数,因为涉及this指向的问题,改为箭头函数
+
+                //清除用户登录信息
+                memoryUtils.user = {};
+                localStorage.removeUser();
+
+                //跳转到用户登录页面
+                this.props.history.replace('/login');
+
+            },
+            onCancel() {
+                console.log('Cancel');
+            },
+        });
+    };
+
     //组件渲染完成时
     componentWillMount() {
 
@@ -97,12 +122,11 @@ class Header extends Component {
 
         //获取当前显示的title
         const title = this.getTitle();
-        console.log(title)
         return (
             <div className="header">
                 <div className="header-top">
-                    <span>hello, { loginUser.username }</span>
-                    <a href="javascript;">退出</a>
+                    <span>您好, { loginUser.username }</span>
+                    <a href="javascript:;" onClick={this.logout}>退出</a>
                 </div>
                 <div className="header-bottom">
                     <div className="header-bottom-left">

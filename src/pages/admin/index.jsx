@@ -40,7 +40,7 @@ export default class Admin extends Component {
                 </Sider>
                 <Layout>
                     <Header>Header</Header>
-                    <Content style={{ backgroundColor: 'pink' }}>
+                    <Content style={{ margin: 20, backgroundColor: 'pink' }}>
                         {/* 配置所有的二级路由 */}
                         <Switch>
                             <Route path='/home' component={Home}/>

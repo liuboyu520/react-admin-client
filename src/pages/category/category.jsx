@@ -36,7 +36,9 @@ export default class Category extends Component {
                             <LinkButton>修改分类</LinkButton>
                             {/* 如果在事件的回调函数中获取外面传递的参数并且组件渲染的时候不执行,等到点击的时候再执行 */}
                             {/* 解决方案：在需要执行的回调逻辑外面再包裹一层函数 */}
-                            <LinkButton onClick={() => this.showSubCategorys(category)}>查看子分类</LinkButton>
+                            {this.state.parentId === "0" ?
+                                <LinkButton onClick={() => this.showSubCategorys(category)}>查看子分类</LinkButton> : null}
+
                         </div>
                     )
                 }
@@ -93,6 +95,16 @@ export default class Category extends Component {
 
     };
 
+    //显示指定一级分类列表
+    showCategorys = () => {
+        //更新状态
+        this.setState({
+            parentId: '0',
+            parentName: '',
+            subCategorys: []
+        });
+    };
+
     //组件渲染前初始化表格的columns
     componentWillMount() {
         this.initColumns();
@@ -106,9 +118,15 @@ export default class Category extends Component {
     render() {
 
         //读取状态数据
-        const {categorys, subCategorys, parentId, parentName } = this.state;
+        const {categorys, subCategorys, parentId, parentName} = this.state;
 
-        const title = '一级分类列表';
+        const title = parentId === '0' ? '一级分类列表' : (
+            <span>
+                <LinkButton onClick={this.showCategorys}>一级分类列表</LinkButton>
+                <Icon type="arrow-right" style={{marginRight: 5}}/>
+                <span>{parentName}</span>
+            </span>
+        );
         const extra = (
             <Button type="primary">
                 <Icon type="plus"/>
@@ -121,7 +139,7 @@ export default class Category extends Component {
                     <Table
                         bordered
                         rowKey="_id"
-                        dataSource={parentId === "0" ? categorys : subCategorys }
+                        dataSource={parentId === "0" ? categorys : subCategorys}
                         columns={this.columns}/>;
                 </Card>
             </div>

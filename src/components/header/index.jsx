@@ -16,6 +16,9 @@ import localStorage from '../../utils/localStorage';
 //引入菜单数据
 import menuList from '../../config/menuConfig';
 
+//引入自定义Button
+import LinkButton from '../../components/link-button';
+
 /**
  * 管理页面头部
  */
@@ -126,7 +129,8 @@ class Header extends Component {
             <div className="header">
                 <div className="header-top">
                     <span>您好, { loginUser.username }</span>
-                    <a href="javascript:;" onClick={this.logout}>退出</a>
+                    {/* 自定义button组件 */}
+                    <LinkButton onClick={this.logout}>退出</LinkButton>
                 </div>
                 <div className="header-bottom">
                     <div className="header-bottom-left">

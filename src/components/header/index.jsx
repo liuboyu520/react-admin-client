@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { withRouter } from 'react-router-dom';
 import './index.less';
 
 import { formateDate } from '../../utils/dateUtils';
@@ -9,12 +10,15 @@ import {reqWeather} from '../../api';
 //引入内存模块
 import memoryUtils from '../../utils/memoryUtils';
 
+//引入菜单数据
+import menuList from '../../config/menuConfig';
+
 /**
  * 管理页面头部
  */
-export default class Header extends Component {
+class Header extends Component {
 
-
+    //状态数据
     state = {
         currentTime: formateDate(Date.now()), //当前时间
         dayPictureUrl: '', //天气图片url
@@ -40,12 +44,33 @@ export default class Header extends Component {
             weather
         });
 
-    }
+    };
+
+    //获取当前显示的标题
+    getTitle = () => {
+        //获取当前访问的path
+        const path = this.props.location.pathname;
+
+        let title = '';
+        //遍历查找当前显示的菜单title
+        menuList.forEach(item =>{
+            if(item.key === path){
+                 title = item.title;
+            }else if(item.children){
+                const cItem = item.children.find(cItem => cItem.key === path);
+                if(cItem){
+                    title = cItem.title;
+                }
+            }
+        });
+        return title;
+    };
 
     //组件渲染完成时
     componentWillMount() {
 
         //更新当前时间
+        //TODO：定时器的执行会导致一直渲染组件
         this.getTime();
 
         //请求天气预报信息
@@ -58,20 +83,25 @@ export default class Header extends Component {
         clearInterval(this.timerId);
     }
 
+    //渲染组件
     render(){
 
         //获取当前登录的用户
         let loginUser = memoryUtils.user;
-        if(!loginUser || !loginUser.name){
+        if(!loginUser || !loginUser.username){
             loginUser = {};
         }
 
         //页面需要显示的信息
         const { currentTime, dayPictureUrl, weather } = this.state;
+
+        //获取当前显示的title
+        const title = this.getTitle();
+        console.log(title)
         return (
             <div className="header">
                 <div className="header-top">
-                    <span>hello, { loginUser.name }</span>
+                    <span>hello, { loginUser.username }</span>
                     <a href="javascript;">退出</a>
                 </div>
                 <div className="header-bottom">
@@ -88,3 +118,5 @@ export default class Header extends Component {
         )
     }
 }
+
+export default withRouter(Header);

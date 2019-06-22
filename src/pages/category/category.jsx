@@ -6,6 +6,8 @@ import {reqCategorys} from '../../api';
 
 //引入自定义标签组件
 import LinkButton from '../../components/link-button';
+import AddForm from './add-form';
+import UpdateForm from './update-form';
 
 /**
  * 商品分类二级路由
@@ -182,7 +184,7 @@ export default class Category extends Component {
                     onOk={this.addCategory}
                     onCancel={this.handleCancel}
                 >
-                    <p>添加分类</p>
+                    <AddForm />
                 </Modal>
 
                 {/* 修改分类弹出框 */}
@@ -192,7 +194,7 @@ export default class Category extends Component {
                     onOk={this.updateCategory}
                     onCancel={this.handleCancel}
                 >
-                    <p>修改分类</p>
+                    <UpdateForm />
                 </Modal>
             </div>
         )

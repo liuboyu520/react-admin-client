@@ -9,14 +9,14 @@ import LeftNav from '../../components/left-nav';
 import Header from '../../components/header';
 
 //引入二级路由
-import Home from '../../components/home/home';
-import Category from '../../components/category/category';
-import Product from '../../components/product/product';
-import User from '../../components/user/user';
-import Role from '../../components/role/role';
-import Bar from '../../components/charts/bar';
-import Line from '../../components/charts/line';
-import Pie from '../../components/charts/pie';
+import Home from '../home/home';
+import Category from '../category/category';
+import Product from '../product/product';
+import User from '../user/user';
+import Role from '../role/role';
+import Bar from '../charts/bar';
+import Line from '../charts/line';
+import Pie from '../charts/pie';
 
 const { Footer, Sider, Content } = Layout;
 

@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Card, Icon, Button, Table, message, Modal} from 'antd';
 
 //引入调用后台接口的API
-import {reqCategorys} from '../../api';
+import { reqCategorys, reqUpdateCategory } from '../../api';
 
 //引入自定义标签组件
 import LinkButton from '../../components/link-button';
@@ -36,7 +36,9 @@ export default class Category extends Component {
                 render: (category) => {
                     return (
                         <div>
-                            <LinkButton onClick={this.showUpdateWindow}>修改分类</LinkButton>
+
+                            {/* 点击修改分类的时候要将原来的值回显到修改页面中 */}
+                            <LinkButton onClick={ () => this.showUpdateWindow(category) }>修改分类</LinkButton>
                             {/* 如果在事件的回调函数中获取外面传递的参数并且组件渲染的时候不执行,等到点击的时候再执行 */}
                             {/* 解决方案：在需要执行的回调逻辑外面再包裹一层函数 */}
                             {this.state.parentId === "0" ?
@@ -109,14 +111,36 @@ export default class Category extends Component {
     };
 
     //显示更新分类弹出窗口
-    showUpdateWindow = () => {
+    showUpdateWindow = (category) => {
+
+        //保存分类对象
+        this.category = category;
+
+        //更新状态
         this.setState({
             showStatus: 2
         });
     }
 
     //修改分类
-    updateCategory = () => {
+    updateCategory = async () => {
+
+        //隐藏修改分类窗口
+        this.setState({
+            showStatus: 0
+        });
+
+        //准备更新分类的参数数据
+        const categoryId = this.category._id;
+        const categoryName = this.form.getFieldValue('categoryName');
+
+        //发送请求更新分类
+        const result = await reqUpdateCategory({ categoryId, categoryName });
+
+        if(result.status === 0){
+            //重新加载分类列表
+            this.getCategorys();
+        }
 
     }
 
@@ -153,6 +177,9 @@ export default class Category extends Component {
 
         //读取状态数据
         const {categorys, subCategorys, parentId, parentName} = this.state;
+
+        //分类对象
+        const category = this.category || {}; //防止报错
 
         const title = parentId === '0' ? '一级分类列表' : (
             <span>
@@ -194,7 +221,8 @@ export default class Category extends Component {
                     onOk={this.updateCategory}
                     onCancel={this.handleCancel}
                 >
-                    <UpdateForm />
+                    {/* 从UpdateForm组件中获取form对象 */}
+                    <UpdateForm categoryName={ category.name } setForm={ (form) => this.form = form }/>
                 </Modal>
             </div>
         )

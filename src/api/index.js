@@ -38,8 +38,12 @@ export const reqWeather = (city) => {
     });
 };
 
-//获取分类数据
+/************* 品类管理Start ************/
+//更加parentId获取分类数据
 export const reqCategorys = (parentId) => ajax('/manage/category/list', {parentId});
+
+//更新分类
+export const reqUpdateCategory = ({categoryId, categoryName}) => ajax('/manage/category/update', {categoryId, categoryName}, 'POST');
 
 
 

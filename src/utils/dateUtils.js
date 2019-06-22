@@ -1,7 +1,7 @@
 /*
 * 格式化时间的工具模块
 */
-
+//格式化时间
 export function formateDate(time) {
     if(!time) return '';
     let date = new Date(time);

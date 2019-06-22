@@ -16,7 +16,6 @@ export const reqLogin = (username, password) => ajax('/login', { username, passw
 
 //请求天气预报信息(jsonp)
 export const reqWeather = (city) => {
-
     return new Promise((resolve, reject) => {
         //请求天气的url
         const url = `http://api.map.baidu.com/telematics/v3/weather?location=${city}&output=json&ak=3p49MVra6urFRGOT9s8UBWr2`;
@@ -37,7 +36,10 @@ export const reqWeather = (city) => {
         });
 
     });
-}
+};
+
+//获取分类数据
+export const reqCategorys = (parentId) => ajax('/manage/category/list', {parentId});
 
 
 

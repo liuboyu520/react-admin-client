@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { Card, Icon, Button, Table } from 'antd';
+import React, {Component} from 'react';
+import {Card, Icon, Button, Table, message} from 'antd';
 
 //引入调用后台接口的API
-import { reqCategorys } from '../../api';
+import {reqCategorys} from '../../api';
 
 //引入自定义标签组件
 import LinkButton from '../../components/link-button';
@@ -15,7 +15,10 @@ export default class Category extends Component {
     //状态数据
     state = {
         loading: false, //数据是否正在加载中
-        categorys: [], //一级或二级分类数据
+        categorys: [], //一级分类列表
+        subCategorys: [], //二级分类列表
+        parentId: '0', //一级分类列表父级ID
+        parentName: '' //父级分类名称
     }
 
     initColumns = () => {
@@ -27,11 +30,13 @@ export default class Category extends Component {
             {
                 title: '操作',
                 width: 300,
-                render: () => {
+                render: (category) => {
                     return (
                         <div>
                             <LinkButton>修改分类</LinkButton>
-                            <LinkButton>查看子分类</LinkButton>
+                            {/* 如果在事件的回调函数中获取外面传递的参数并且组件渲染的时候不执行,等到点击的时候再执行 */}
+                            {/* 解决方案：在需要执行的回调逻辑外面再包裹一层函数 */}
+                            <LinkButton onClick={() => this.showSubCategorys(category)}>查看子分类</LinkButton>
                         </div>
                     )
                 }
@@ -39,19 +44,54 @@ export default class Category extends Component {
         ];
     }
 
+    //获取一级/二级分类列表(根据parentId的值是否等于"0"加以区分)
     getCategorys = async () => {
 
         //发送请求前显示loading
         this.setState({loading: true});
-        const result = await reqCategorys();
+
+        //读取parentId
+        const {parentId} = this.state;
+
+        const result = await reqCategorys(parentId);
 
         //返回结果后隐藏loading
         this.setState({loading: false});
+
+        if (result.status === 0) { //请求成功
+
+            if (parentId === "0") { //获取的是一级分类列表
+                //更新状态
+                this.setState({
+                    categorys: result.data
+                });
+            } else { //获取的是二级分类列表
+                //更新状态
+                this.setState({
+                    subCategorys: result.data
+                });
+            }
+
+        } else {
+            //提示信息
+            message.error('请求分类数据失败！');
+        }
+    };
+
+    //获取二级分类列表
+    showSubCategorys = (category) => {
+
+        //更新状态
+        //setState()是一个异步执行的方法,需要等状态更新完成再执行某些操作的时候需要添加回调函数
         this.setState({
-            categorys: result.data
+            parentId: category._id,
+            parentName: category.name
+        }, () => { //在状态更新后并且render()完成后再执行
+            //获取二级分类列表
+            this.getCategorys();
         });
-        
-    }
+
+    };
 
     //组件渲染前初始化表格的columns
     componentWillMount() {
@@ -63,10 +103,10 @@ export default class Category extends Component {
         this.getCategorys();
     }
 
-    render(){
+    render() {
 
         //读取状态数据
-        const { categorys } = this.state;
+        const {categorys, subCategorys, parentId, parentName } = this.state;
 
         const title = '一级分类列表';
         const extra = (
@@ -81,8 +121,8 @@ export default class Category extends Component {
                     <Table
                         bordered
                         rowKey="_id"
-                        dataSource={categorys}
-                        columns={this.columns} />;
+                        dataSource={parentId === "0" ? categorys : subCategorys }
+                        columns={this.columns}/>;
                 </Card>
             </div>
         )

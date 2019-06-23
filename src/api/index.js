@@ -53,5 +53,14 @@ export const reqAddCategory = (parentId, categoryName) => ajax('/manage/category
 //获取商品列表(分页)
 export const reqProducts = (pageNum, pageSize) => ajax('/manage/product/list', {pageNum, pageSize});
 
+//搜索商品列表(分页)
+export const reqSearchProducts = (pageNum, pageSize, searchType, searchName) => {
+    return ajax('/manage/product/search', {
+        pageNum,
+        pageSize,
+        [searchType]: searchName
+    });
+};
+
 
 

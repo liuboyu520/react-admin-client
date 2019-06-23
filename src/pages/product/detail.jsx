@@ -5,6 +5,9 @@ import {
     Icon
 }from 'antd';
 
+import LinkButton from '../../components/link-button';
+import { BASE_IMG_URL } from '../../utils/const';
+
 const Item = List.Item;
 
 /**
@@ -14,9 +17,17 @@ export default class ProductDetail extends Component {
 
     render(){
 
+        //读取携带过来的state属性
+        const { name, desc, price, detail, imgs } = this.props.location.state.product;
         const title = (
             <span>
-                <Icon type="arrow-left"/>
+                <LinkButton>
+                    <Icon
+                        type="arrow-left"
+                        style={{ color: 'green', marginRight:10 }}
+                        onClick={ () => this.props.history.goBack() }
+                    />
+                </LinkButton>
                 <span>商品详情</span>
             </span>
         );
@@ -25,15 +36,15 @@ export default class ProductDetail extends Component {
                 <List>
                     <Item>
                         <span className="left">商品名称：</span>
-                        <span>这是一个神奇的商品</span>
+                        <span>{ name }</span>
                     </Item>
                     <Item>
                         <span className="left">商品名描述：</span>
-                        <span>这是一个神奇的商品</span>
+                        <span>{ desc }</span>
                     </Item>
                     <Item>
                         <span className="left">商品名价格：</span>
-                        <span>1000000</span>
+                        <span>{ price }</span>
                     </Item>
                     <Item>
                         <span className="left">所属分类：</span>
@@ -42,19 +53,20 @@ export default class ProductDetail extends Component {
                     <Item>
                         <span className="left">商品图片：</span>
                         <span>
-                            <img
-                                className="product-img"
-                                src="https://img.alicdn.com/simba/img/TB18l8tb8Kw3KVjSZFOSuurDVXa.jpg"
-                                alt="img"/>
-                            <img
-                                className="product-img"
-                                src="https://img.alicdn.com/simba/img/TB18l8tb8Kw3KVjSZFOSuurDVXa.jpg"
-                                alt="img"/>
+                            {
+                                imgs.map(img => (
+                                    <img
+                                        key={ img }
+                                        className="product-img"
+                                        src={ BASE_IMG_URL + img }
+                                        alt="img"/>
+                                ))
+                            }
                         </span>
                     </Item>
                     <Item>
                         <span className="left">商品详情：</span>
-                        <span  dangerouslySetInnerHTML={{ __html: '<h1>商品详情详情</h1>' }}></span>
+                        <span  dangerouslySetInnerHTML={{ __html: detail }}></span>
                     </Item>
                 </List>
             </Card>

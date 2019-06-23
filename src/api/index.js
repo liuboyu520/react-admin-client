@@ -38,7 +38,7 @@ export const reqWeather = (city) => {
     });
 };
 
-/************* 品类管理Start ************/
+/************* 1.品类管理 Start ************/
 //更加parentId获取分类数据
 export const reqCategorys = (parentId) => ajax('/manage/category/list', {parentId});
 
@@ -47,6 +47,11 @@ export const reqUpdateCategory = (categoryId, categoryName) => ajax('/manage/cat
 
 //添加分类
 export const reqAddCategory = (parentId, categoryName) => ajax('/manage/category/add', {parentId, categoryName}, 'POST');
+
+
+/************* 2.商品管理 Start ************/
+//获取商品列表(分页)
+export const reqProducts = (pageNum, pageSize) => ajax('/manage/product/list', {pageNum, pageSize});
 
 
 

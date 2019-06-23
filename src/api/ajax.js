@@ -12,18 +12,21 @@ export default function (url, data = {}, method = 'GET') {
     return new Promise((resolve, reject) => {
 
         let promise;
-
         //1.执行异步ajax请求
         if (method === 'GET') { //GET请求
+
             promise = axios.get(url, { //配置对象
                 params: data //指定请求参数
             });
+
         } else if (method === 'POST') { //POST请求
             promise = axios.post(url, data);
         }
 
         //2.异步请求成功,执行resolve(value)
         promise.then(response => {
+            console.log('后台数据请求成功');
+            console.log(response.data);
             resolve(response.data); //请求成功响应的数据
         }).catch(err => {
 

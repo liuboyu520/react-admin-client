@@ -31,6 +31,21 @@ class ProductAddUpdate extends Component {
         this.getCategorys('0');
     }
 
+    //组件即将渲染前
+    componentWillMount() {
+
+        //获取传递过来的state
+        const { product }  = this.props.location.state || {};
+
+        //是否更新商品的标识
+        //保存该标识
+        this.isUpdate = !!product; //将变量转变成布尔值
+
+        //保存商品信息
+        this.product = product || {};
+
+    }
+
     //初始化options数据
     initOptions = (categorys) => {
 
@@ -132,15 +147,6 @@ class ProductAddUpdate extends Component {
 
     render(){
 
-        const title = (
-            <span>
-                <LinkButton>
-                    <Icon type="arrow-left" style={{ marginRight: 10 }}></Icon>
-                    <span>添加商品</span>
-                </LinkButton>
-            </span>
-        );
-
         //Form.Item的布局设置
         const formItemLayout = {
             labelCol: { span: 2 }, //左侧label的宽度
@@ -148,13 +154,40 @@ class ProductAddUpdate extends Component {
         };
 
         const { getFieldDecorator } = this.props.form;
+
+        const { isUpdate, product } = this;
+
+        const { pCategoryId, categoryId } = product;
+
+        //商品分类数组
+        const categoryIds = [];
+
+        if(isUpdate){
+
+            if(pCategoryId === '0'){ //一级分类
+                categoryIds.push(categoryId);
+            }else { //二级分类
+                categoryIds.push(pCategoryId);
+                categoryIds.push(categoryId);
+            }
+        }
+
+        const title = (
+            <span>
+                <LinkButton onClick={ () => {this.props.history.goBack()} }>
+                    <Icon type="arrow-left" style={{ marginRight: 10 }}></Icon>
+                    <span>{isUpdate ? '修改商品' : '添加商品'}</span>
+                </LinkButton>
+            </span>
+        );
+
         return (
             <Card title={ title }>
                 <Form { ...formItemLayout } onSubmit={ this.formSubmit }>
                     <Item label="商品名称">
                         {
                             getFieldDecorator('name', {
-                                initialValue: '',
+                                initialValue: product.name,
                                 rules: [
                                     { required: true, whiteSpace: true, message: '商品名称不能为空' }
                                 ]
@@ -167,7 +200,7 @@ class ProductAddUpdate extends Component {
                     <Item label="商品描述">
                         {
                             getFieldDecorator('desc', {
-                                initialValue: '',
+                                initialValue: product.desc,
                                 rules: [
                                     { required: true, whiteSpace: true, message: '商品描述不能为空' }
                                 ]
@@ -180,7 +213,7 @@ class ProductAddUpdate extends Component {
                     <Item label="商品价格">
                         {
                             getFieldDecorator('price', {
-                                initialValue: '',
+                                initialValue: product.price,
                                 rules: [
                                     { required: true, whiteSpace: true, message: '商品价格不能为空' },
                                     { validator: this.validatePrice }
@@ -192,10 +225,19 @@ class ProductAddUpdate extends Component {
                         }
                     </Item>
                     <Item label="商品分类">
-                        <Cascader
-                            options={this.state.options}
-                            loadData={this.loadData}
-                        />
+                        {
+                            getFieldDecorator('categoryIds', {
+                                initialValue: categoryIds,
+                                rules: [
+                                    { required: true, whiteSpace: true, message: '商品分类不能为空' },
+                                ]
+                            })(
+                                <Cascader
+                                    options={this.state.options}
+                                    loadData={this.loadData}
+                                />
+                            )
+                        }
                     </Item>
                     <Item label="商品图片">
                         <div>商品图片</div>

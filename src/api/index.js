@@ -48,6 +48,9 @@ export const reqUpdateCategory = (categoryId, categoryName) => ajax('/manage/cat
 //添加分类
 export const reqAddCategory = (parentId, categoryName) => ajax('/manage/category/add', {parentId, categoryName}, 'POST');
 
+//根据ID获取一个分类信息
+export const reqCategory = (categoryId) => ajax('/manage/category/info', { categoryId });
+
 
 /************* 2.商品管理 Start ************/
 //获取商品列表(分页)

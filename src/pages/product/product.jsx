@@ -6,6 +6,9 @@ import ProductHome from './home';
 import ProductAddUpdate from './add-update';
 import ProductDetail from './detail';
 
+//引入样式
+import './product.less';
+
 /**
  * 商品管理二级路由
  */

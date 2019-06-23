@@ -14,6 +14,8 @@ import LinkButton from '../../components/link-button';
 
 import { reqCategorys } from '../../api';
 
+import PicturesWall from './pictures-wall';
+
 const { Item } = Form;
 const { TextArea } = Input;
 
@@ -21,6 +23,12 @@ const { TextArea } = Input;
  * 商品管理商品添加和修改子路由组件
  */
 class ProductAddUpdate extends Component {
+
+
+    constructor(props) {
+        super(props);
+        this.pw = React.createRef();
+    }
 
     state = {
         options: [],
@@ -77,7 +85,7 @@ class ProductAddUpdate extends Component {
             //将二级列表的options关联到当前的option上
             targetOption.children = childOptions;
         }
-        
+
         //更新状态
         this.setState({
             options,
@@ -123,6 +131,8 @@ class ProductAddUpdate extends Component {
         this.props.form.validateFields((err, values) => {
             if(!err){
                 message.success('发送ajax请求');
+                const imgs = this.pw.current.getUploadImgNames();
+                console.log(imgs);
             }
         });
 
@@ -251,7 +261,7 @@ class ProductAddUpdate extends Component {
                             getFieldDecorator('categoryIds', {
                                 initialValue: categoryIds,
                                 rules: [
-                                    { required: true, whiteSpace: true, message: '商品分类不能为空' },
+                                    { required: true, message: '商品分类不能为空' },
                                 ]
                             })(
                                 <Cascader
@@ -262,7 +272,7 @@ class ProductAddUpdate extends Component {
                         }
                     </Item>
                     <Item label="商品图片">
-                        <div>商品图片</div>
+                        <PicturesWall ref={ this.pw }/>
                     </Item>
                     <Item label="商品详情">
                         <div>商品详情</div>

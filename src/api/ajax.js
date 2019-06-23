@@ -10,7 +10,7 @@ import {message} from "antd";
 export default function (url, data = {}, method = 'GET') {
 
     return new Promise((resolve, reject) => {
-        console.log(data);
+
         let promise;
         //1.执行异步ajax请求
         if (method === 'GET') { //GET请求

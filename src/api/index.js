@@ -43,7 +43,10 @@ export const reqWeather = (city) => {
 export const reqCategorys = (parentId) => ajax('/manage/category/list', {parentId});
 
 //更新分类
-export const reqUpdateCategory = ({categoryId, categoryName}) => ajax('/manage/category/update', {categoryId, categoryName}, 'POST');
+export const reqUpdateCategory = (categoryId, categoryName) => ajax('/manage/category/update', {categoryId, categoryName}, 'POST');
+
+//添加分类
+export const reqAddCategory = (parentId, categoryName) => ajax('/manage/category/add', {parentId, categoryName}, 'POST');
 
 
 

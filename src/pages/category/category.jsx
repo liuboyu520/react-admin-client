@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {Card, Icon, Button, Table, message, Modal} from 'antd';
 
 //引入调用后台接口的API
-import { reqCategorys, reqUpdateCategory } from '../../api';
+import { reqCategorys, reqUpdateCategory, reqAddCategory } from '../../api';
 
 //引入自定义标签组件
 import LinkButton from '../../components/link-button';
@@ -130,15 +130,18 @@ export default class Category extends Component {
             showStatus: 0
         });
 
-        //准备更新分类的参数数据
+        //准备更新分类的参数
         const categoryId = this.category._id;
         const categoryName = this.form.getFieldValue('categoryName');
 
-        //发送请求更新分类
-        const result = await reqUpdateCategory({ categoryId, categoryName });
+        //重置所有输入框控件的值
+        this.form.resetFields();
 
+        //发送请求更新分类
+        const result = await reqUpdateCategory(categoryId, categoryName);
+
+        //重新加载分类列表
         if(result.status === 0){
-            //重新加载分类列表
             this.getCategorys();
         }
 
@@ -152,12 +155,37 @@ export default class Category extends Component {
     }
 
     //添加分类
-    addCategory = () => {
+    addCategory = async () => {
+
+        //隐藏添加分类窗口
+        this.setState({
+            showStatus: 0
+        });
+
+        //准备添加分类的参数
+        const { parentId, categoryName } = this.form.getFieldsValue();
+
+        //重置所有输入框控件的值
+        this.form.resetFields();
+
+        //发送请求添加分类
+        const result = await reqAddCategory(parentId, categoryName);
+
+        //重新加载分类列表
+        if(result.status === 0){
+            this.getCategorys();
+        }
 
     }
 
     //关闭添加/更新窗口
     handleCancel = () => {
+
+        //重置所有输入框控件的值
+        if(this.form){
+            this.form.resetFields();
+        }
+
         this.setState({
             showStatus: 0
         });
@@ -181,6 +209,7 @@ export default class Category extends Component {
         //分类对象
         const category = this.category || {}; //防止报错
 
+        //标题动态显示
         const title = parentId === '0' ? '一级分类列表' : (
             <span>
                 <LinkButton onClick={this.showCategorys}>一级分类列表</LinkButton>
@@ -211,7 +240,12 @@ export default class Category extends Component {
                     onOk={this.addCategory}
                     onCancel={this.handleCancel}
                 >
-                    <AddForm />
+                    {/* 添加分类的时候需要传递的参数 */}
+                    <AddForm
+                        categorys={ categorys }
+                        parentId={ parentId }
+                        setForm={ (form) => this.form = form }
+                    />
                 </Modal>
 
                 {/* 修改分类弹出框 */}
@@ -222,7 +256,11 @@ export default class Category extends Component {
                     onCancel={this.handleCancel}
                 >
                     {/* 从UpdateForm组件中获取form对象 */}
-                    <UpdateForm categoryName={ category.name } setForm={ (form) => this.form = form }/>
+                    <UpdateForm
+                        categoryName={ category.name }
+                        setForm={ (form) =>
+                            this.form = form }
+                    />
                 </Modal>
             </div>
         )

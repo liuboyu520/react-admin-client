@@ -77,7 +77,8 @@ class LeftNav extends Component {
             }else {
 
                 //查找当前请求路径对应选中的子列表(选中的子菜单在刷新页面的情况下处于展开状态)
-                const result = item.children.find(childItem => childItem.key === pathName);
+                //修复菜单不展开的bug  childItem.key === pathName 改为 pathName.indexOf(childItem.key) === 0
+                const result = item.children.find(childItem => pathName.indexOf(childItem.key) === 0);
                 if(result){ //匹配成功
                     this.selectKey = item.key; //将当前匹配子菜单的父级菜单key保存在组件实例对象的selectKey属性中
                 }
@@ -112,7 +113,12 @@ class LeftNav extends Component {
     render() {
 
         //获取当前请求的路径名称(添加到defaultSelectedKeys属性中,实现请求的路径与菜单的选中状态进行同步)
-        const pathName = this.props.location.pathname;
+        let pathName = this.props.location.pathname;
+
+        //修复菜单不选中的bug
+        if(pathName.indexOf('/product') === 0){ //当前请求的是商品或其子路由界面
+            pathName = '/product';
+        }
 
         //得到当前需要打开菜单的key
         const selectKey = this.selectKey;

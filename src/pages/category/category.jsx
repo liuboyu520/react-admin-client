@@ -123,27 +123,34 @@ export default class Category extends Component {
     }
 
     //修改分类
-    updateCategory = async () => {
+    updateCategory = () => {
 
-        //隐藏修改分类窗口
-        this.setState({
-            showStatus: 0
+        this.form.validateFields(async (err, values) => {
+
+            if(!err){
+
+                //隐藏修改分类窗口
+                this.setState({
+                    showStatus: 0
+                });
+
+                //准备更新分类的参数
+                const categoryId = this.category._id;
+                const { categoryName } = values;
+
+                //重置所有输入框控件的值
+                this.form.resetFields();
+
+                //发送请求更新分类
+                const result = await reqUpdateCategory(categoryId, categoryName);
+
+                //重新加载分类列表
+                if(result.status === 0){
+                    this.getCategorys();
+                }
+
+            }
         });
-
-        //准备更新分类的参数
-        const categoryId = this.category._id;
-        const categoryName = this.form.getFieldValue('categoryName');
-
-        //重置所有输入框控件的值
-        this.form.resetFields();
-
-        //发送请求更新分类
-        const result = await reqUpdateCategory(categoryId, categoryName);
-
-        //重新加载分类列表
-        if(result.status === 0){
-            this.getCategorys();
-        }
 
     }
 
@@ -155,35 +162,40 @@ export default class Category extends Component {
     }
 
     //添加分类
-    addCategory = async () => {
+    addCategory = () => {
 
-        //隐藏添加分类窗口
-        this.setState({
-            showStatus: 0
-        });
+        //表单验证通过才能进行添加操作
+        this.form.validateFields(async (err, values) => {
+            if(!err){
+                //隐藏添加分类窗口
+                this.setState({
+                    showStatus: 0
+                });
 
-        //准备添加分类的参数
-        const { parentId, categoryName } = this.form.getFieldsValue();
+                //准备添加分类的参数
+                const { parentId, categoryName } = values;
 
-        //重置所有输入框控件的值
-        this.form.resetFields();
+                //重置所有输入框控件的值
+                this.form.resetFields();
 
-        //发送请求添加分类
-        const result = await reqAddCategory(parentId, categoryName);
+                //发送请求添加分类
+                const result = await reqAddCategory(parentId, categoryName);
 
-        if(result.status === 0){
+                if(result.status === 0){
 
-            //添加的分类就是当前分类列表下的分类
-            if(parentId === this.state.parentId){
-                //重新加载当前分类列表显示
-                this.getCategorys();
-            }else if(parentId === '0'){ //在二级分类列表下添加一级分类
-                //1.重新获取一级分类
-                //2.不需要显示一级分类,因为当前界面显示在二级分类,只要保证一级分类数据更新就好
-                this.getCategorys('0');
+                    //添加的分类就是当前分类列表下的分类
+                    if(parentId === this.state.parentId){
+                        //重新加载当前分类列表显示
+                        this.getCategorys();
+                    }else if(parentId === '0'){ //在二级分类列表下添加一级分类
+                        //1.重新获取一级分类
+                        //2.不需要显示一级分类,因为当前界面显示在二级分类,只要保证一级分类数据更新就好
+                        this.getCategorys('0');
+                    }
+
+                }
             }
-
-        }
+        });
 
     }
 

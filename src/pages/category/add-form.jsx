@@ -30,7 +30,7 @@ class AddForm extends Component {
 
                     {
                         getFieldDecorator('parentId', { //配置对象, initialValue: parentId 能够动态的选择到对应的分类
-                            initialValue: parentId
+                            initialValue: parentId,
                         })(
                             <Select >
                                 <Option value="0">一级分类</Option>
@@ -46,7 +46,10 @@ class AddForm extends Component {
                 <Item>
                     {
                         getFieldDecorator('categoryName', { //配置对象
-                            initialValue: ''
+                            initialValue: '',
+                            rules: [
+                                { required: true, message: '分类名称不能为空' }
+                            ]
                         })(
                             <Input placeholder="请输入分类名称"/>
                         )

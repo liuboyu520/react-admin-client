@@ -28,7 +28,10 @@ class UpdateForm extends Component {
                 <Item>
                     {
                         getFieldDecorator('categoryName', { //配置对象
-                            initialValue: categoryName
+                            initialValue: categoryName,
+                            rules: [
+                                { required: true, message: '分类名称不能为空' }
+                            ]
                         })(
                             <Input placeholder="请输入分类名称"/>
                         )

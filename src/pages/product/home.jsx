@@ -5,14 +5,15 @@ import {
     Input,
     Button,
     Table,
-    Icon
+    Icon,
+    message
 } from 'antd';
 
 //导入自定义组件LinkButton
 import LinkButton from '../../components/link-button';
 
 //引入后台接口API
-import { reqProducts,reqSearchProducts } from '../../api';
+import { reqProducts,reqSearchProducts, reqUpdateStatus } from '../../api';
 
 //引入常量模块
 import { PAGE_SIZE } from '../../utils/const';
@@ -54,12 +55,12 @@ export default class ProductHome extends Component {
             {
                 title: '状态',
                 width: 100,
-                dataIndex: 'status',
-                render: (status) => {
+                render: (product) => {
+                    const { _id, status } = product;
                     return (
                         <span>
-                            <Button type="primary" >下架</Button>
-                            <span>在售</span>
+                            <Button type="primary" onClick={ () => this.updateStatus(_id, status === 1 ? 2 : 1) }>{ status === 1 ? '下架' : '上架' }</Button>
+                            <span>{ status === 1 ? '在售' : '已下架'}</span>
                         </span>
                     )
                 }
@@ -81,6 +82,9 @@ export default class ProductHome extends Component {
 
     //获取指定页码的商品数据
     getProducts = async (pageNum) => {
+
+        //保存当前pageNum的值,更新商品状态的时候需要该值
+        this.pageNum = pageNum;
 
         //发送请求前显示loading
         this.setState({loading: true});
@@ -109,6 +113,19 @@ export default class ProductHome extends Component {
                 total,
                 products: list
             });
+        }
+    }
+
+    //更新商品状态(上架/下架)
+    updateStatus = async (productId, status) => {
+
+        //发送请求更新商品状态
+        const result = await reqUpdateStatus(productId, status);
+
+        if(result.status === 0){
+            message.success('更新商品成功');
+            //重新获取商品列表数据
+            this.getProducts(this.pageNum);
         }
     }
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import {
     Upload,
     Icon,
@@ -7,11 +8,40 @@ import {
 } from 'antd';
 
 import { reqDeleteImage } from '../../api';
+import { BASE_IMG_URL } from '../../utils/const';
 
 /**
  * 图片上传组件
  */
 export default class PicturesWall extends React.Component {
+
+    constructor (props) {
+        super(props);
+
+        let fileList = [];
+
+        //如果传入了imgs属性
+        const { imgs } = this.props;
+        if(imgs && imgs.length > 0){
+            fileList = imgs.map((img, index) => ({
+                uid: -index,
+                name: img,
+                status: 'done',
+                url: BASE_IMG_URL + img,
+            }));
+        }
+
+        //初始化状态
+        this.setState({
+            previewVisible: false, //标识是否显示大图<Modal/>组件
+            previewImage: '', //大图的URL
+            fileList,
+        });
+    }
+
+    static propTypes = {
+        imgs: PropTypes.array
+    }
 
     state = {
         previewVisible: false, //标识是否显示大图<Modal/>组件

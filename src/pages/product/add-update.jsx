@@ -83,7 +83,9 @@ class ProductAddUpdate extends Component {
             const targetOption = options.find(option => option.value === pCategoryId);
 
             //将二级列表的options关联到当前的option上
-            targetOption.children = childOptions;
+            if(targetOption){
+                targetOption.children = childOptions
+            }
         }
 
         //更新状态
@@ -189,7 +191,7 @@ class ProductAddUpdate extends Component {
 
         const { isUpdate, product } = this;
 
-        const { pCategoryId, categoryId } = product;
+        const { pCategoryId, categoryId, imgs } = product;
 
         //商品分类数组
         const categoryIds = [];
@@ -272,7 +274,7 @@ class ProductAddUpdate extends Component {
                         }
                     </Item>
                     <Item label="商品图片">
-                        <PicturesWall ref={ this.pw }/>
+                        <PicturesWall ref={ this.pw } imgs={imgs}/>
                     </Item>
                     <Item label="商品详情">
                         <div>商品详情</div>

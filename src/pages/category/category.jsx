@@ -52,13 +52,13 @@ export default class Category extends Component {
     }
 
     //获取一级/二级分类列表(根据parentId的值是否等于"0"加以区分)
-    getCategorys = async () => {
+    getCategorys = async (parentId) => {
 
         //发送请求前显示loading
         this.setState({loading: true});
 
         //读取parentId
-        const {parentId} = this.state;
+        parentId = parentId || this.state.parentId; //参数有传递parentId则使用传递过来的
 
         const result = await reqCategorys(parentId);
 
@@ -171,9 +171,18 @@ export default class Category extends Component {
         //发送请求添加分类
         const result = await reqAddCategory(parentId, categoryName);
 
-        //重新加载分类列表
         if(result.status === 0){
-            this.getCategorys();
+
+            //添加的分类就是当前分类列表下的分类
+            if(parentId === this.state.parentId){
+                //重新加载当前分类列表显示
+                this.getCategorys();
+            }else if(parentId === '0'){ //在二级分类列表下添加一级分类
+                //1.重新获取一级分类
+                //2.不需要显示一级分类,因为当前界面显示在二级分类,只要保证一级分类数据更新就好
+                this.getCategorys('0');
+            }
+
         }
 
     }

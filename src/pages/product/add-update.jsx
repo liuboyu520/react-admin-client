@@ -47,7 +47,7 @@ class ProductAddUpdate extends Component {
     }
 
     //初始化options数据
-    initOptions = (categorys) => {
+    initOptions = async (categorys) => {
 
         //根据categorys生成options数组
         const options = categorys.map(item => ({
@@ -56,6 +56,28 @@ class ProductAddUpdate extends Component {
             isLeaf: false, //是否叶子节点
         }));
 
+        //如果是一个二级分类商品的更新
+        const { isUpdate, product } = this;
+        const { pCategoryId, categoryId } = product
+        if(isUpdate && pCategoryId !== '0'){
+
+            //获取对应的二级分类列表
+            const subCategorys = await this.getCategorys(pCategoryId);
+
+            //生成一个二级列表的options
+            const childOptions = subCategorys.map(subCatory => ({
+                value: subCatory._id,
+                label: subCatory.name,
+                isLeaf: true, //是否叶子节点
+            }));
+
+            //找到当前商品对应的一级option
+            const targetOption = options.find(option => option.value === pCategoryId);
+
+            //将二级列表的options关联到当前的option上
+            targetOption.children = childOptions;
+        }
+        
         //更新状态
         this.setState({
             options,

@@ -8,6 +8,7 @@ import { reqCategorys, reqUpdateCategory, reqAddCategory } from '../../api';
 import LinkButton from '../../components/link-button';
 import AddForm from './add-form';
 import UpdateForm from './update-form';
+import {PAGE_SIZE} from "../../utils/const";
 
 /**
  * 商品分类二级路由
@@ -251,7 +252,12 @@ export default class Category extends Component {
                         bordered
                         rowKey="_id"
                         dataSource={parentId === "0" ? categorys : subCategorys}
-                        columns={this.columns}/>;
+                        columns={this.columns}
+                        pagination={{
+                            defaultPageSize: PAGE_SIZE,
+                            showQuickJumper: true,
+                        }}
+                    />;
                 </Card>
 
                 {/* 添加分类弹出框 */}

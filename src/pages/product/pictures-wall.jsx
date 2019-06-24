@@ -32,15 +32,11 @@ export default class PicturesWall extends React.Component {
         }
 
         //初始化状态
-        this.setState({
+        this.state = {
             previewVisible: false, //标识是否显示大图<Modal/>组件
-            previewImage: '', //大图的URL
-            fileList,
-        });
-    }
-
-    static propTypes = {
-        imgs: PropTypes.array
+            previewImage: '', //大图URL
+            fileList
+        }
     }
 
     state = {
@@ -48,6 +44,10 @@ export default class PicturesWall extends React.Component {
         previewImage: '', //大图的URL
         fileList: [], //已经上传的文件列表（受控）
     };
+
+    static propTypes = {
+        imgs: PropTypes.array
+    }
 
     //隐藏<Modal/>组件
     handleCancel = () => this.setState({previewVisible: false});

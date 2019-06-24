@@ -16,6 +16,9 @@ import { reqCategorys } from '../../api';
 
 import PicturesWall from './pictures-wall';
 
+//引入富文本编辑器
+import RichTextEditor from './rich-text-editor';
+
 const { Item } = Form;
 const { TextArea } = Input;
 
@@ -24,10 +27,10 @@ const { TextArea } = Input;
  */
 class ProductAddUpdate extends Component {
 
-
     constructor(props) {
         super(props);
         this.pw = React.createRef();
+        this.editor = React.createRef();
     }
 
     state = {
@@ -134,7 +137,8 @@ class ProductAddUpdate extends Component {
             if(!err){
                 message.success('发送ajax请求');
                 const imgs = this.pw.current.getUploadImgNames();
-                console.log(imgs);
+                const editor = this.editor.current.getDetail();
+
             }
         });
 
@@ -191,7 +195,7 @@ class ProductAddUpdate extends Component {
 
         const { isUpdate, product } = this;
 
-        const { pCategoryId, categoryId, imgs } = product;
+        const { pCategoryId, categoryId, imgs, detail } = product;
 
         //商品分类数组
         const categoryIds = [];
@@ -276,8 +280,10 @@ class ProductAddUpdate extends Component {
                     <Item label="商品图片">
                         <PicturesWall ref={ this.pw } imgs={imgs}/>
                     </Item>
-                    <Item label="商品详情">
-                        <div>商品详情</div>
+                    <Item label="商品详情"
+                          labelCol={{ span: 2 }}
+                          wrapperCol={{ span: 20 }}>
+                        <RichTextEditor ref={ this.editor } detail={ detail }/>
                     </Item>
                     <Item>
                         <Button type="primary" htmlType="submit">提交</Button>

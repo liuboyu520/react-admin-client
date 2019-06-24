@@ -10,8 +10,19 @@ const { TreeNode } = Tree;
 
 export default class AuthForm extends Component {
 
+    constructor (props) {
+        super(props);
+
+        //更加传递过来的role持有的menus初始化checkedKeys
+        const { menus } = this.props.role;
+        this.state = {
+            checkedKeys: menus
+        }
+
+    }
+
     static propTypes = {
-        role: PropTypes.object.isRequired
+        role: PropTypes.object
     }
 
     getTreeNodes = (menuList) => {
@@ -24,6 +35,15 @@ export default class AuthForm extends Component {
             return prev;
         }, []);
     }
+
+    getMenus = () => this.state.checkedKeys;
+
+    onCheck = (checkedKeys, info) => {
+        console.log('onCheck', checkedKeys, info);
+        this.setState({
+            checkedKeys,
+        });
+    };
 
     //根据菜单列表数据生成权限树
     componentWillMount() {
@@ -39,6 +59,7 @@ export default class AuthForm extends Component {
         };
 
         const { role } = this.props;
+        const { checkedKeys } = this.state;
         return (
             <div>
                 <Item label="角色名称" {...formItemLayout}>
@@ -47,6 +68,8 @@ export default class AuthForm extends Component {
                 <Tree
                     checkable
                     defaultExpandAll={true}
+                    checkedKeys={checkedKeys}
+                    onCheck={this.onCheck}
                 >
                     <TreeNode title="平台权限" key="root">
                         {

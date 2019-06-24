@@ -8,7 +8,7 @@ import {
 } from 'antd';
 
 import {PAGE_SIZE} from "../../utils/const";
-import { reqRoles, reqAddRole } from '../../api';
+import { reqRoles, reqAddRole, reqUpdateRole } from '../../api';
 
 import AddForm from './add-form';
 import AuthForm from './auth-form';
@@ -24,6 +24,11 @@ export default class Role extends Component {
         role: {}, //当前选中的角色
         isShowAdd: false, //是否显示添加角色窗口
         isShowAuth: false, //是否显示角色权限设置窗口
+    }
+
+    constructor (props) {
+        super(props);
+        this.auth = React.createRef();
     }
 
     //初始化表格列
@@ -106,7 +111,39 @@ export default class Role extends Component {
     }
 
     //修改角色(设置角色权限)
-    updateRole = () => {
+    updateRole = async () => {
+
+        //获取当前设置权限的角色
+        const { role } = this.state;
+
+        //获取所有选中的菜单集合
+        const menus = this.auth.current.getMenus();
+
+        //设置role
+        role.menus = menus;
+
+        //请求更新
+        const result = await reqUpdateRole(role);
+
+        //隐藏窗口
+        this.setState({
+            isShowAuth: false
+        });
+
+        if(result.status === 0){
+
+            //提示信息
+            message.success('更新角色权限成功');
+
+            //更新roles
+            this.setState({
+                roles: [...this.state.roles]
+            });
+
+        }else {
+            message.error('更新角色权限失败');
+        }
+
 
     }
 
@@ -181,6 +218,7 @@ export default class Role extends Component {
                     <AuthForm
                         setForm={ (form) => this.form = form }
                         role={role}
+                        ref={this.auth}
                     />
                 </Modal>
             </Card>

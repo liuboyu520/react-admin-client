@@ -54,6 +54,26 @@ export default class RichTextEditor extends Component {
         return draftToHtml(convertToRaw(this.state.editorState.getCurrentContent()));
     }
 
+    uploadImageCallBack = (file) => {
+        return new Promise(
+            (resolve, reject) => {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/manage/img/upload');
+                const data = new FormData();
+                data.append('image', file);
+                xhr.send(data);
+                xhr.addEventListener('load', () => {
+                    const response = JSON.parse(xhr.responseText);
+                    resolve({data: {link: response.data.url}})
+                });
+                xhr.addEventListener('error', () => {
+                    const error = JSON.parse(xhr.responseText);
+                    reject(error);
+                });
+            }
+        );
+    }
+
     //渲染组件
     render() {
         const { editorState } = this.state;
@@ -63,6 +83,9 @@ export default class RichTextEditor extends Component {
                     editorState={editorState}
                     wrapperStyle={{ minHeight: 200, border: '1px solid black', paddingLeft: 10 }}
                     onEditorStateChange={this.onEditorStateChange}
+                    toolbar={{
+                        image: { uploadCallback: this.uploadImageCallBack, alt: { present: true, mandatory: true } },
+                    }}
                 />
             </div>
         );

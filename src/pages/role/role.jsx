@@ -8,10 +8,10 @@ import {
 } from 'antd';
 
 import {PAGE_SIZE} from "../../utils/const";
-
 import { reqRoles, reqAddRole } from '../../api';
 
 import AddForm from './add-form';
+import AuthForm from './auth-form';
 
 /**
  * 角色管理二级路由
@@ -92,6 +92,9 @@ export default class Role extends Component {
                     message.error('添加角色失败');
                 }
 
+                //重置所有表单项的值
+                this.form.resetFields();
+
                 //更新状态数据(使用第二种方式)
                 this.setState(state => ({
                     roles: [...state.roles, result.data]
@@ -99,6 +102,11 @@ export default class Role extends Component {
 
             }
         });
+
+    }
+
+    //修改角色(设置角色权限)
+    updateRole = () => {
 
     }
 
@@ -115,15 +123,20 @@ export default class Role extends Component {
     render(){
 
         const { roles, role } = this.state;
-
         const title = (
             <span>
                 <Button type="primary"
                         style={{ marginRight: 15 }}
-                        onClick={ ()=> {this.setState({isShowAdd: true})} }>
+                        onClick={ ()=> {this.setState({isShowAdd: true})}}
+                >
                     创建角色
                 </Button>
-                <Button type="primary" disabled={!role}>设置角色权限</Button>
+                <Button type="primary"
+                        disabled={!role.name}
+                        onClick={ ()=>{this.setState({isShowAuth: true})}}
+                >
+                    设置角色权限
+                </Button>
             </span>
         );
         return (
@@ -151,7 +164,7 @@ export default class Role extends Component {
                     onOk={this.addRole}
                     onCancel={()=>{this.setState({isShowAdd: false})}}
                 >
-                    {/* 添加分类的时候需要传递的参数 */}
+                    {/* 添加角色的时候需要传递的参数 */}
                     <AddForm
                         setForm={ (form) => this.form = form }
                     />
@@ -161,12 +174,13 @@ export default class Role extends Component {
                 <Modal
                     title="设置角色权限"
                     visible={this.state.isShowAuth}
-                    onOk={this.addRole}
-                    onCancel={()=>{this.setState({isShowAdd: false})}}
+                    onOk={this.updateRole}
+                    onCancel={()=>{this.setState({isShowAuth: false})}}
                 >
-                    {/* 添加分类的时候需要传递的参数 */}
-                    <AddForm
+                    {/* 设置角色权限的时候需要传递的参数 */}
+                    <AuthForm
                         setForm={ (form) => this.form = form }
+                        role={role}
                     />
                 </Modal>
             </Card>

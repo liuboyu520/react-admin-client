@@ -1,5 +1,5 @@
 /*
- * 添加分类表单组件
+ * 添加角色表单组件
  */
 
 import React, { Component } from 'react';

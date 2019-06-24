@@ -75,4 +75,8 @@ export const reqDeleteImage = (name) => ajax('/manage/img/delete', { name }, 'PO
 //(product._id ? 'update' : 'add')必须要用括号包起来,否则路径只能拿到update或add
 export const reqAddOrUpdateProduct = (product) => ajax('/manage/product/' + (product._id ? 'update' : 'add'), product, 'POST');
 
+/************* 3.角色管理 Start ************/
+//获取角色列表
+export const reqRoles = () => ajax('/manage/role/list', {});
+
 

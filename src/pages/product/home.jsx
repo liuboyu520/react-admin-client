@@ -40,14 +40,17 @@ export default class ProductHome extends Component {
             {
                 title: '商品名称',
                 dataIndex: 'name',
+                align: 'center'
             },
             {
                 title: '商品描述',
                 dataIndex: 'desc',
+                align: 'center'
             },
             {
                 title: '价格',
                 dataIndex: 'price',
+                align: 'center',
                 render: (price) => {
                     return '￥' + price;
                 }
@@ -55,6 +58,7 @@ export default class ProductHome extends Component {
             {
                 title: '状态',
                 width: 100,
+                align: 'center',
                 render: (product) => {
                     const { _id, status } = product;
                     return (
@@ -68,6 +72,7 @@ export default class ProductHome extends Component {
             {
                 title: '操作',
                 width: 200,
+                align: 'center',
                 render: (product) => {
                     return (
                         <span>

@@ -53,7 +53,9 @@ class Header extends Component {
     };
 
     //获取当前显示的标题
+    //TODO 该方法会一致调用更新
     getTitle = () => {
+
         //获取当前访问的path
         const path = this.props.location.pathname;
 

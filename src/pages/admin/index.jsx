@@ -25,13 +25,20 @@ const { Footer, Sider, Content } = Layout;
  */
 export default class Admin extends Component {
 
-    render(){
+    //验证用户是否登录状态(优化)
+    //优化前验证的逻辑在render()方法中,这样会导致每次访问路由的时候都会进行验证,会影响效率
+    componentWillMount() {
+
         const user = memoryUtils.user;
         //如果内存中没有存储user(用户没有登录)
         if(!user || !user._id){
             //自动跳转到登录页面
             return <Redirect to="/login"/>
         }
+    }
+
+    render(){
+
         return (
             <Layout style={{ minHeight: '100%' }}>
                 {/* 左侧菜单 */}

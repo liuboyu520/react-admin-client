@@ -34,6 +34,7 @@ export default class Category extends Component {
             {
                 title: '操作',
                 width: 300,
+                align: 'center',
                 render: (category) => {
                     return (
                         <div>
@@ -147,6 +148,8 @@ export default class Category extends Component {
 
                 //重新加载分类列表
                 if(result.status === 0){
+
+                    //使用第一种方式(直接通过后台更新数据)
                     this.getCategorys();
                 }
 

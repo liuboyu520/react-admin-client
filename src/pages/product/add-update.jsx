@@ -12,7 +12,7 @@ import {
 
 import LinkButton from '../../components/link-button';
 
-import { reqCategorys } from '../../api';
+import { reqCategorys, reqAddOrUpdateProduct } from '../../api';
 
 import PicturesWall from './pictures-wall';
 
@@ -133,12 +133,50 @@ class ProductAddUpdate extends Component {
         event.preventDefault();
 
         //表单全部验证通过才发送ajax请求
-        this.props.form.validateFields((err, values) => {
+        this.props.form.validateFields(async (err, values) => {
             if(!err){
-                message.success('发送ajax请求');
-                const imgs = this.pw.current.getUploadImgNames();
-                const editor = this.editor.current.getDetail();
 
+                //图片信息
+                const imgs = this.pw.current.getUploadImgNames();
+
+                //商品详情
+                const detail = this.editor.current.getDetail();
+
+                let categoryId = '';
+                let pCategoryId = '';
+
+                //收集表单数据
+                const { name, desc, price, categoryIds } = values;
+
+                if(categoryIds.length === 1){
+                    pCategoryId = '0';
+                    categoryId = categoryIds[0];
+                }else {
+                    pCategoryId = categoryIds[0];
+                    categoryId = categoryIds[1];
+                }
+
+                //封装成请求参数对象
+                const product = { name, desc, price, categoryId, pCategoryId, imgs, detail };
+
+                //如果是更新,向product中添加一个_id属性
+                if(this.isUpdate){
+                    product._id = this.product._id;
+                }
+
+                //请求后台进行添加/更新操作
+                const result = await reqAddOrUpdateProduct(product);
+
+                if(result.status === 0){
+
+                    //提示成功信息
+                    message.success(`${this.isUpdate ? '更新' : '添加'}商品成功`);
+
+                    this.props.history.goBack();
+
+                }else {
+                    message.error(`${this.isUpdate ? '更新' : '添加'}商品失败`);
+                }
             }
         });
 

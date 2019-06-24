@@ -71,4 +71,8 @@ export const reqUpdateStatus = (productId, status) => ajax('/manage/product/upda
 //删除图片
 export const reqDeleteImage = (name) => ajax('/manage/img/delete', { name }, 'POST');
 
+//添加/更新商品
+//(product._id ? 'update' : 'add')必须要用括号包起来,否则路径只能拿到update或add
+export const reqAddOrUpdateProduct = (product) => ajax('/manage/product/' + (product._id ? 'update' : 'add'), product, 'POST');
+
 

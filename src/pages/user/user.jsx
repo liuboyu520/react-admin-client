@@ -9,22 +9,75 @@ import {
 
 import {PAGE_SIZE} from "../../utils/const";
 
-import { reqUsers, reqDeleteUser } from '../../api';
+import { reqUsers, reqDeleteUser, reqAddOrUpdateUser } from '../../api';
 import LinkButton from "../../components/link-button";
+import UserForm from "./user-form";
 
 
-/**
+/**f
  * 用户管理二级路由
  */
 export default class User extends Component {
 
     state = {
-        users: []
+        isShow: false, //是否显示添加用户窗口
+        users: [], //用户列表数据
+        roles: [],  //所有角色数据
     }
 
-    //添加用户
-    addUser = () => {
-        message.success('添加用户成功');
+    //显示添加用户界面
+    showAdd = () => {
+
+        //将user清除
+        this.user = null;
+
+        //改变状态显示窗口
+        this.setState({
+            isShow: true
+        });
+
+    }
+
+    //显示修改用户界面
+    showUpdate = (user) => {
+        //将当前要修改的user保存
+        this.user = user;
+
+        //改变状态显示窗口
+        this.setState({
+            isShow: true
+        });
+
+    }
+
+    //添加/修改用户
+    addOrUpdateUser = async () => {
+
+        //收集表单数据
+        const user = this.form.getFieldsValue();
+
+        //清空表单项中的缓存
+        this.form.resetFields();
+
+        //修改用户(添加_id参数)
+        if(this.user){
+            user._id = this.user._id;
+        }
+
+        //发送请求
+        const result = await reqAddOrUpdateUser(user);
+
+        //处理结果
+        if(result.status === 0){
+            message.success(`${this.user ? '修改' : '添加'}用户成功`);
+            this.getUsers();
+        }
+
+        //隐藏窗口
+        this.setState({
+            isShow: false
+        });
+
     }
 
     //删除用户
@@ -59,17 +112,37 @@ export default class User extends Component {
     //获取用户列表数据
     getUsers = async () => {
         const result = await reqUsers();
-        console.log(result);
         if(result.status === 0){
+
+            //分别获取用户和角色数据
+            const { users, roles } = result.data;
+
+            //初始化角色名称(用于表格角色名称展示)
+            this.initRoleNames(roles);
 
             //更新状态
             this.setState({
-                users: result.data.users
+                users,
+                roles,
             });
 
         }else {
             message.error('获取用户失败');
         }
+    }
+
+    initRoleNames = (roles) => {
+
+        const roleNames = roles.reduce((prev, role) => {
+
+            prev[role._id] = role.name;
+
+            return prev;
+
+        }, {});
+
+        this.roleNames = roleNames;
+
     }
 
     //初始化表格列
@@ -98,7 +171,10 @@ export default class User extends Component {
             {
                 title: '所属角色',
                 dataIndex: 'role_id',
-                align: 'center'
+                align: 'center',
+                render: (roleId) => {
+                    return this.roleNames[roleId]
+                }
             },
             {
                 title: '操作',
@@ -106,7 +182,7 @@ export default class User extends Component {
                 render: (user) => {
                     return (
                         <span>
-                            <LinkButton onClick={()=>{}}>修改</LinkButton>
+                            <LinkButton onClick={()=>{this.showUpdate(user)}}>修改</LinkButton>
                             <LinkButton onClick={()=>{this.deleteUser(user)}}>删除</LinkButton>
                         </span>
                     )
@@ -130,13 +206,14 @@ export default class User extends Component {
 
         const title = (
             <span>
-                <Button type="primary" onClick={ this.addUser }>
+                <Button type="primary" onClick={ this.showAdd }>
                     创建用户
                 </Button>
             </span>
         );
 
-        const { users } = this.state;
+        const { users, roles } = this.state;
+        const user = this.user || {}; //对用户进行一下null处理
         return (
             <Card title={title}>
                 <Table
@@ -149,6 +226,25 @@ export default class User extends Component {
                         showQuickJumper: true,
                     }}
                 />
+
+                {/* 添加用户弹出窗口 */}
+                <Modal
+                    title="添加用户"
+                    visible={this.state.isShow}
+                    onOk={this.addOrUpdateUser}
+                    onCancel= { () => {
+                            this.form.resetFields();
+                            this.setState({isShow: false});
+                        }
+                    }
+                >
+                    {/* 添加用户需要传递的参数 */}
+                    <UserForm
+                        setForm={ form => this.form = form }
+                        user={user}
+                        roles={roles}
+                    />
+                </Modal>
 
             </Card>
         )

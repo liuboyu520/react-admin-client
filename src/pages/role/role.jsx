@@ -185,7 +185,10 @@ export default class Role extends Component {
                     columns={this.columns}
                     rowSelection={{
                         type: 'radio',
-                        selectedRowKeys: [role._id]
+                        selectedRowKeys: [role._id],
+                        onSelect: (role) => {
+                            this.setState({role,});
+                        }
                     }}
                     pagination={{
                         defaultPageSize: PAGE_SIZE,

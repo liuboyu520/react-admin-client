@@ -91,7 +91,7 @@ class Header extends Component {
 
             },
             onCancel() {
-                console.log('Cancel');
+
             },
         });
     };
@@ -125,7 +125,7 @@ class Header extends Component {
         //页面需要显示的信息
         const { currentTime, dayPictureUrl, weather } = this.state;
 
-        //获取当前显示的title
+        //标题
         const title = this.getTitle();
         return (
             <div className="header">
@@ -136,7 +136,7 @@ class Header extends Component {
                 </div>
                 <div className="header-bottom">
                     <div className="header-bottom-left">
-                        <span>首页</span>
+                        <span>{title}</span>
                     </div>
                     <div className="header-bottom-right">
                         <span>{ currentTime }</span>

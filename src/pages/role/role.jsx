@@ -216,7 +216,6 @@ export default class Role extends Component {
                 >
                     {/* 设置角色权限的时候需要传递的参数 */}
                     <AuthForm
-                        setForm={ (form) => this.form = form }
                         role={role}
                         ref={this.auth}
                     />

@@ -13,7 +13,7 @@ export default class AuthForm extends Component {
     constructor (props) {
         super(props);
 
-        //更加传递过来的role持有的menus初始化checkedKeys
+        //根据传递过来的role持有的menus初始化checkedKeys
         const { menus } = this.props.role;
         this.state = {
             checkedKeys: menus
@@ -39,7 +39,6 @@ export default class AuthForm extends Component {
     getMenus = () => this.state.checkedKeys;
 
     onCheck = (checkedKeys, info) => {
-        console.log('onCheck', checkedKeys, info);
         this.setState({
             checkedKeys,
         });
@@ -48,6 +47,17 @@ export default class AuthForm extends Component {
     //根据菜单列表数据生成权限树
     componentWillMount() {
         this.TreeNodes = this.getTreeNodes(menuList);
+    }
+
+    // componentWillReceiveProps在初始化render的时候不会执行，
+    // 它会在Component接受到新的状态(Props)时被触发，
+    // 一般用于父组件状态更新时子组件的重新渲染
+    //解决的问题：权限节点选中状态没有更新,因为状态state中的checkedKeys没有更新
+    componentWillReceiveProps(nextProps, nextContext) {
+        //更新checkedKeys
+        this.setState({
+            checkedKeys: nextProps.role.menus
+        });
     }
 
     render(){

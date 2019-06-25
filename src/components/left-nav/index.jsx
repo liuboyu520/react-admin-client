@@ -12,6 +12,8 @@ import './index.less';
 //引入菜单数据
 import menuList from '../../config/menuConfig';
 
+import memoryUtils from '../../utils/memoryUtils';
+
 const {SubMenu} = Menu;
 
 /**
@@ -57,50 +59,76 @@ class LeftNav extends Component {
         });
     };
 
+    //判断当前用户是否有当前菜单项的权限
+    hashAuth = (item) => {
+
+        //获取当前登录的用户
+        const user = memoryUtils.user;
+
+        //获取用户所能访问的菜单集合
+        const menus = user.role.menus;
+
+        //当前登录用户的用户名
+        const username = user.username;
+
+        if(username === 'admin' || menus.indexOf(item.key) !== -1){
+            return true;
+        } else if (item.children) {
+            return !!item.children.find(cItem => menus.indexOf(cItem.key) !== -1);
+        }
+
+        return false;
+    }
+
     //使用数组的reduce()和递归算法实现
     getMenuNodes = (menuList) => {
 
         //获取当前请求的路径
         const pathName = this.props.location.pathname;
         return menuList.reduce((prev, item) => {
-            if(!item.children){
-                prev.push(
-                    (
-                        <Menu.Item key={item.key}>
-                            <Link to={item.key}>
-                                <Icon type={item.icon}/>
-                                <span>{item.title}</span>
-                            </Link>
-                        </Menu.Item>
-                    )
-                );
-            }else {
 
-                //查找当前请求路径对应选中的子列表(选中的子菜单在刷新页面的情况下处于展开状态)
-                //修复菜单不展开的bug  childItem.key === pathName 改为 pathName.indexOf(childItem.key) === 0
-                const result = item.children.find(childItem => pathName.indexOf(childItem.key) === 0);
-                if(result){ //匹配成功
-                    this.selectKey = item.key; //将当前匹配子菜单的父级菜单key保存在组件实例对象的selectKey属性中
-                }
-                prev.push(
-                    (
-                        <SubMenu
-                            key={item.key}
-                            title={
-                                <span>
+            //如果当前用户有对应的权限, 才显示对应的菜单项
+            if(this.hashAuth(item)){
+                if(!item.children){
+                    prev.push(
+                        (
+                            <Menu.Item key={item.key}>
+                                <Link to={item.key}>
+                                    <Icon type={item.icon}/>
+                                    <span>{item.title}</span>
+                                </Link>
+                            </Menu.Item>
+                        )
+                    );
+                }else {
+
+                    //查找当前请求路径对应选中的子列表(选中的子菜单在刷新页面的情况下处于展开状态)
+                    //修复菜单不展开的bug  childItem.key === pathName 改为 pathName.indexOf(childItem.key) === 0
+                    const result = item.children.find(childItem => pathName.indexOf(childItem.key) === 0);
+                    if(result){ //匹配成功
+                        this.selectKey = item.key; //将当前匹配子菜单的父级菜单key保存在组件实例对象的selectKey属性中
+                    }
+                    prev.push(
+                        (
+                            <SubMenu
+                                key={item.key}
+                                title={
+                                    <span>
                                 <Icon type={item.icon}/>
                                 <span>{item.title}</span>
                              </span>
-                            }
-                        >
+                                }
+                            >
 
-                            {
-                                this.getMenuNodes(item.children)
-                            }
-                        </SubMenu>
-                    )
-                );
+                                {
+                                    this.getMenuNodes(item.children)
+                                }
+                            </SubMenu>
+                        )
+                    );
+                }
             }
+
             return prev;
         },[]);
     };

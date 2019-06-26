@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Modal } from 'antd';
 import { withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 
 import './index.less';
 
@@ -126,7 +127,9 @@ class Header extends Component {
         const { currentTime, dayPictureUrl, weather } = this.state;
 
         //标题
-        const title = this.getTitle();
+        //const title = this.getTitle();
+        //改用redux方式
+        const title = this.props.headTitle;
         return (
             <div className="header">
                 <div className="header-top">
@@ -149,4 +152,8 @@ class Header extends Component {
     }
 }
 
-export default withRouter(Header);
+export default connect(
+    state => ({headTitle: state.headTitle}),
+    {}
+)(withRouter(Header));
+

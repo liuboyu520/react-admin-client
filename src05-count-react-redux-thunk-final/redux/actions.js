@@ -20,3 +20,4 @@ export const incrementAsync = number => {
         }, 1000);
     }
 }
+

@@ -14,6 +14,9 @@ import menuList from '../../config/menuConfig';
 
 import memoryUtils from '../../utils/memoryUtils';
 
+import { connect } from 'react-redux';
+import { setHeadTitle } from '../../redux/actions';
+
 const {SubMenu} = Menu;
 
 /**
@@ -27,7 +30,7 @@ class LeftNav extends Component {
      */
     getMenuNodes_ = (menuList) => {
         return menuList.map(item => {
-            console.log(item)
+
             if(!item.children) {
                 return (
                     <Menu.Item key={item.key}>
@@ -65,6 +68,7 @@ class LeftNav extends Component {
         //获取当前登录的用户
         const user = memoryUtils.user;
 
+        console.log(user);
         //获取用户所能访问的菜单集合
         const menus = user.role.menus;
 
@@ -90,10 +94,14 @@ class LeftNav extends Component {
             //如果当前用户有对应的权限, 才显示对应的菜单项
             if(this.hashAuth(item)){
                 if(!item.children){
+
+                    if(pathName === item.key || pathName.indexOf(item.key) === 0){
+                        this.props.setHeadTitle(item.title);
+                    }
                     prev.push(
                         (
                             <Menu.Item key={item.key}>
-                                <Link to={item.key}>
+                                <Link to={item.key} onClick={()=>{this.props.setHeadTitle(item.title)}}>
                                     <Icon type={item.icon}/>
                                     <span>{item.title}</span>
                                 </Link>
@@ -177,4 +185,7 @@ class LeftNav extends Component {
  *      新的组件向非路由组件传递路由组件都有的3个属性：history/location/match
  *      而请求的路径名称刚好在location中
  */
-export default withRouter(LeftNav);
+export default connect(
+    state => ({}),
+    {setHeadTitle}
+)(withRouter(LeftNav));

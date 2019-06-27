@@ -18,7 +18,7 @@ export default class Product extends Component {
 
         return (
             <Switch>
-                {/* exact={true} 路径的完全匹配 */}
+                {/* exact={true} 路径的完全匹配 */}t
                 <Route path="/product" component={ ProductHome } exact={true}/>
                 <Route path="/product/addupdate" component={ ProductAddUpdate }/>
                 <Route path="/product/detail" component={ ProductDetail }/>
